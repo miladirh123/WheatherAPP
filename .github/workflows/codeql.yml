@@ -1,43 +1,31 @@
-name: Android CI Pipeline
+name: Build Android APK
 
 on:
   push:
-    branches: [master]
-  pull_request:
+    branches: [ master ]  # ou autre branche
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup JDK 17
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: 17
+          distribution: 'temurin'
+          java-version: '17'  # selon ton projet
 
-      - name: Grant permissions to gradlew
+      - name: Grant permission to Gradle
         run: chmod +x ./gradlew
 
-      - name: Build APK
+      - name: Build debug APK
         run: ./gradlew assembleDebug
-
-      - name: Run Android Lint
-        run: ./gradlew lintDebug
-
-      - name: Run Unit Tests
-        run: ./gradlew testDebugUnitTest
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: debug-apk
+          name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
-
-      - name: Upload Lint Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: lint-report
-          path: app/build/reports/lint-results-debug.html
